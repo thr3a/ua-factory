@@ -4,9 +4,22 @@
       <h1 class="display-3">ua-factory</h1>
       <p class="lead">ユーザーエージェントをランダムに生成します。</p>
     </div>
-    <input type="text" v-model="ua" id="ua-text" class="form-control mb-2">
-    <button class="btn btn-primary" @click="reload">再生成</button>
-    <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
+    <form>
+      <div class="form-group">
+        <p>デバイス</p>
+        <input type="checkbox" id="pc" value="desktop" v-model="devices" v-on:change="reload">
+        <label for="pc">PC</label>
+        <input type="checkbox" id="mobile" value="mobile" v-model="devices" v-on:change="reload">
+        <label for="mobile">スマートフォン</label>
+        <input type="checkbox" id="tablet" value="tablet" v-model="devices" v-on:change="reload">
+        <label for="tablet">タブレット</label>
+      </div>
+      <div class="form-group">
+        <input type="text" v-model="ua_single" id="ua-text" class="form-control mb-2">
+        <button class="btn btn-primary" @click="reload">再生成</button>
+        <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
+      </div>
+    </form>
   </section>
 </template>
 
@@ -15,16 +28,24 @@ import UserAgent from "user-agents";
 import clipboard from "clipboard";
 
 export default {
-  asyncData(context) {
-    const userAgent = new UserAgent();
+  data() {
     return {
-      ua: userAgent.toString()
+      devices: ["desktop", "mobile", "tablet"]
+    };
+  },
+  async asyncData(context) {
+    const ua = new UserAgent();
+    return {
+      ua: ua,
+      ua_single: ua.random().userAgent
     };
   },
   methods: {
     reload: function() {
-      const ua = new UserAgent().toString();
-      this.$data.ua = ua;
+      this.$data.ua = new UserAgent(data => {
+        return this.$data.devices.indexOf(data.deviceCategory) >= 0;
+      });
+      this.$data.ua_single = this.$data.ua.random().userAgent;
     }
   },
   mounted: function() {
