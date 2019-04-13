@@ -1,8 +1,22 @@
 <template>
-  <section class="container mt-4">
-      <h1 class="display-3">ua-factory</h1>
-      <p class="lead">ユーザーエージェントをランダムに生成します。</p>
-      <hr />
+  <section class="container mt-4 shadow-lg p-3 mb-5 bg-white rounded">
+    <h1 class="display-3">ua-factory</h1>
+    <p class="lead">ユーザーエージェントをランダムに生成します。テスト等にどうぞ。</p>
+    <div class="form-group mb-4">
+      <input type="text" :value="ua_single" id="ua-text" class="form-control">
+      <button class="btn-copy btn btn-info" data-clipboard-target="#ua-text">クリップボードにコピー</button>
+    </div>
+
+    10件一括版
+    <div class="form-group">
+      <textarea id="ua-texts" rows="5" :value="ua_multiple | formatMulti(multi_view)"></textarea>
+      <button class="btn-copy btn btn-info" data-clipboard-target="#ua-texts">クリップボードにコピー</button>
+    </div>
+
+    <div class="form-group">
+      <button class="btn btn-lg btn-primary mx-auto d-block" @click="reload">もう一回生成する！</button>
+    </div>
+
     <div class="form-group">
       <p>デバイス</p>
       <input type="radio" id="all" value="all" v-model="device" v-on:change="reload">
@@ -15,22 +29,13 @@
       <label for="tablet">タブレット</label>
     </div>
     <div class="form-group">
-      <input type="text" :value="ua_single" id="ua-text" class="form-control mb-2">
-      <button class="btn btn-primary" @click="reload">再生成</button>
-      <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
-    </div>
-    <div class="form-group">
-      <p>表示オプション</p>
+      <p>一括版表示オプション</p>
       <input type="radio" id="list" value="list" v-model="multi_view">
-      <label for="list">一覧表示</label>
+      <label for="list">そのまま</label>
       <input type="radio" id="array_double" value="array_double" v-model="multi_view">
       <label for="array_double">ダブルクォーテーションで囲った配列</label>
       <input type="radio" id="array_single" value="array_single" v-model="multi_view">
       <label for="array_single">シングルクォーテーションで囲った配列</label>
-    </div>
-
-    <div class="form-group">
-      <textarea id="ua-texts" rows="10" :value="ua_multiple | toList(multi_view)"></textarea>
     </div>
   </section>
 </template>
@@ -86,7 +91,7 @@ export default {
     this.clipBoard.on("error", function(e) {});
   },
   filters: {
-    toList: function(array, type) {
+    formatMulti: function(array, type) {
       if (type === "list") {
         return array.join("\n");
       } else if (type === "array_double") {
@@ -102,5 +107,8 @@ export default {
 <style>
 #ua-texts {
   width: 100%;
+}
+label {
+  margin-right: 10px;
 }
 </style>
