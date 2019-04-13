@@ -21,7 +21,7 @@
       <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
     </div>
     <div class="form-group">
-      <textarea id="ua-texts" rows="10" :value="ua_multiple"></textarea>
+      <textarea id="ua-texts" rows="10" :value="ua_multiple | toList"></textarea>
     </div>
   </section>
 </template>
@@ -41,7 +41,7 @@ export default {
     return {
       ua: ua,
       ua_single: ua.random().userAgent,
-      ua_multiple: Array.from(Array(10), (v, k) => ua.random().userAgent).join("\n")
+      ua_multiple: Array.from(Array(10), (v, k) => ua.random().userAgent)
     };
   },
   methods: {
@@ -61,7 +61,7 @@ export default {
       //   return this.$data.device.indexOf(data.deviceCategory) >= 0;
       // });
       this.$data.ua_single = this.$data.ua.random().userAgent;
-      this.$data.ua_multiple = Array.from(Array(10), (v, k) => this.$data.ua.random().userAgent).join("\n")
+      this.$data.ua_multiple = Array.from(Array(10), (v, k) => this.$data.ua.random().userAgent)
     }
   },
   mounted: function() {
@@ -71,6 +71,11 @@ export default {
       e.clearSelection();
     });
     this.clipBoard.on("error", function(e) {});
+  },
+  filters: {
+    toList: function (array) {
+      return array.join("\n");
+    }
   }
 };
 </script>
