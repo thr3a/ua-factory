@@ -1,9 +1,8 @@
 <template>
   <section class="container mt-4">
-    <div class="jumbotron">
       <h1 class="display-3">ua-factory</h1>
       <p class="lead">ユーザーエージェントをランダムに生成します。</p>
-    </div>
+      <hr />
     <div class="form-group">
       <p>デバイス</p>
       <input type="radio" id="all" value="all" v-model="device" v-on:change="reload">
@@ -21,7 +20,17 @@
       <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
     </div>
     <div class="form-group">
-      <textarea id="ua-texts" rows="10" :value="ua_multiple | toList"></textarea>
+      <p>表示オプション</p>
+      <input type="radio" id="list" value="list" v-model="multi_view">
+      <label for="list">一覧表示</label>
+      <input type="radio" id="array_double" value="array_double" v-model="multi_view">
+      <label for="array_double">ダブルクォーテーションで囲った配列</label>
+      <input type="radio" id="array_single" value="array_single" v-model="multi_view">
+      <label for="array_single">シングルクォーテーションで囲った配列</label>
+    </div>
+
+    <div class="form-group">
+      <textarea id="ua-texts" rows="10" :value="ua_multiple | toList(multi_view)"></textarea>
     </div>
   </section>
 </template>
@@ -33,7 +42,8 @@ import clipboard from "clipboard";
 export default {
   data() {
     return {
-      device: "all"
+      device: "all",
+      multi_view: "list"
     };
   },
   async asyncData(context) {
@@ -61,7 +71,10 @@ export default {
       //   return this.$data.device.indexOf(data.deviceCategory) >= 0;
       // });
       this.$data.ua_single = this.$data.ua.random().userAgent;
-      this.$data.ua_multiple = Array.from(Array(10), (v, k) => this.$data.ua.random().userAgent)
+      this.$data.ua_multiple = Array.from(
+        Array(10),
+        (v, k) => this.$data.ua.random().userAgent
+      );
     }
   },
   mounted: function() {
@@ -73,8 +86,14 @@ export default {
     this.clipBoard.on("error", function(e) {});
   },
   filters: {
-    toList: function (array) {
-      return array.join("\n");
+    toList: function(array, type) {
+      if (type === "list") {
+        return array.join("\n");
+      } else if (type === "array_double") {
+        return JSON.stringify(array, null, "  ");
+      } else if (type === "array_single") {
+        return JSON.stringify(array, null, "  ").replace(/"/g, "'");
+      }
     }
   }
 };
