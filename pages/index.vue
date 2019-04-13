@@ -15,9 +15,12 @@
         <label for="tablet">タブレット</label>
       </div>
       <div class="form-group">
-        <input type="text" v-model="ua_single" id="ua-text" class="form-control mb-2">
+        <input type="text" :value="ua_single" id="ua-text" class="form-control mb-2">
         <button class="btn btn-primary" @click="reload">再生成</button>
         <button class="btn-copy btn btn-success" data-clipboard-target="#ua-text">クリップボードにコピー</button>
+      </div>
+      <div class="form-group">
+        <textarea id="ua-texts" rows="10" :value="ua_multiple"></textarea>
       </div>
     </form>
   </section>
@@ -37,7 +40,8 @@ export default {
     const ua = new UserAgent();
     return {
       ua: ua,
-      ua_single: ua.random().userAgent
+      ua_single: ua.random().userAgent,
+      ua_multiple: Array.from({ length: 10 }, (v, k) => ua.random().userAgent).join("\n")
     };
   },
   methods: {
@@ -60,4 +64,7 @@ export default {
 </script>
 
 <style>
+#ua-texts {
+  width: 100%;
+}
 </style>
